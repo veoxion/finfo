@@ -6,7 +6,6 @@ import Link from 'next/link'
 import axios from 'axios'
 import { saveAuth } from '@/lib/auth'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 
 function LoginForm() {
   const router = useRouter()
@@ -24,7 +23,7 @@ function LoginForm() {
     setLoading(true)
 
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/auth/login`, { email, password })
+      const res = await axios.post(`/api/auth/login`, { email, password })
       saveAuth(res.data.token, res.data.email, res.data.nickname)
       const isMaster = res.data.email === process.env.NEXT_PUBLIC_MASTER_EMAIL
       router.replace(isMaster ? '/admin' : from)

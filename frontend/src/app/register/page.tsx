@@ -6,7 +6,6 @@ import Link from 'next/link'
 import axios from 'axios'
 import { saveAuth } from '@/lib/auth'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
 
 export default function RegisterPage() {
@@ -38,7 +37,7 @@ export default function RegisterPage() {
 
     setLoading(true)
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/auth/register`, { email, password, nickname })
+      const res = await axios.post(`/api/auth/register`, { email, password, nickname })
       saveAuth(res.data.token, res.data.email, res.data.nickname)
       router.replace('/')
     } catch (err: unknown) {

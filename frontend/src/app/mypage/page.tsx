@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { getToken, clearAuth, saveNickname } from '@/lib/auth'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
-
 interface UserInfo {
   id: string
   email: string
@@ -32,7 +30,7 @@ export default function MyPage() {
 
   useEffect(() => {
     axios
-      .get<UserInfo>(`${BACKEND_URL}/api/user/me`, { headers: authHeaders() })
+      .get<UserInfo>(`/api/user/me`, { headers: authHeaders() })
       .then((res) => {
         setUser(res.data)
         setNicknameInput(res.data.nickname ?? '')
@@ -46,7 +44,7 @@ export default function MyPage() {
     setNicknameLoading(true)
     try {
       const res = await axios.put(
-        `${BACKEND_URL}/api/user/nickname`,
+        `/api/user/nickname`,
         { nickname: nicknameInput },
         { headers: authHeaders() }
       )
@@ -64,7 +62,7 @@ export default function MyPage() {
   const handleDeleteAccount = async () => {
     setDeleteLoading(true)
     try {
-      await axios.delete(`${BACKEND_URL}/api/user`, { headers: authHeaders() })
+      await axios.delete(`/api/user`, { headers: authHeaders() })
       clearAuth()
       router.replace('/login')
     } catch {

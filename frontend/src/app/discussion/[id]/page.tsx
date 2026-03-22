@@ -6,7 +6,6 @@ import Link from 'next/link'
 import axios from 'axios'
 import { getToken, getEmail } from '@/lib/auth'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 const POLL_INTERVAL = 3000
 
 interface Message {
@@ -57,7 +56,7 @@ export default function ChatRoomPage() {
 
   // 초기 로딩
   const fetchMessages = useCallback(async (after?: string) => {
-    const url = `${BACKEND_URL}/api/chat/rooms/${id}/messages${after ? `?after=${encodeURIComponent(after)}` : ''}`
+    const url = `/api/chat/rooms/${id}/messages${after ? `?after=${encodeURIComponent(after)}` : ''}`
     const res = await axios.get(url, { headers: authHeaders() })
     return res.data as { messages: Message[]; roomName: string; createdBy: string; reportCount: number; isLocked: boolean }
   }, [id])
@@ -106,7 +105,7 @@ export default function ChatRoomPage() {
     setSending(true)
     try {
       const res = await axios.post(
-        `${BACKEND_URL}/api/chat/rooms/${id}/messages`,
+        `/api/chat/rooms/${id}/messages`,
         { content: input.trim() },
         { headers: authHeaders() }
       )
@@ -127,7 +126,7 @@ export default function ChatRoomPage() {
     setReporting(true)
     try {
       const res = await axios.post(
-        `${BACKEND_URL}/api/chat/rooms/${id}/report`,
+        `/api/chat/rooms/${id}/report`,
         { reason: reportReason.trim() },
         { headers: authHeaders() }
       )

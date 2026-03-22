@@ -5,8 +5,6 @@ import Link from 'next/link'
 import axios from 'axios'
 import { getToken, getEmail } from '@/lib/auth'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
-
 interface Room {
   id: string
   name: string
@@ -39,7 +37,7 @@ export default function DiscussionPage() {
   const myEmail = getEmail()
 
   const fetchRooms = async () => {
-    const res = await axios.get<Room[]>(`${BACKEND_URL}/api/chat/rooms`, { headers: authHeaders() })
+    const res = await axios.get<Room[]>(`/api/chat/rooms`, { headers: authHeaders() })
     setRooms(res.data)
   }
 
@@ -52,7 +50,7 @@ export default function DiscussionPage() {
     setCreateError('')
     setCreating(true)
     try {
-      await axios.post(`${BACKEND_URL}/api/chat/rooms`, { name: newRoomName }, { headers: authHeaders() })
+      await axios.post(`/api/chat/rooms`, { name: newRoomName }, { headers: authHeaders() })
       setNewRoomName('')
       setShowCreate(false)
       await fetchRooms()
@@ -67,7 +65,7 @@ export default function DiscussionPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('채팅방을 삭제하시겠습니까?')) return
     try {
-      await axios.delete(`${BACKEND_URL}/api/chat/rooms/${id}`, { headers: authHeaders() })
+      await axios.delete(`/api/chat/rooms/${id}`, { headers: authHeaders() })
       setRooms((prev) => prev.filter((r) => r.id !== id))
     } catch {
       alert('삭제에 실패했습니다.')

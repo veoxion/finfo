@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { getToken, getEmail } from '@/lib/auth'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 const MASTER_EMAIL = process.env.NEXT_PUBLIC_MASTER_EMAIL ?? ''
 
 const SOURCES = ['WorldBank', 'FRED', 'ECOS', 'BLS', 'KOSIS']
@@ -86,10 +85,10 @@ export default function AdminPage() {
 
   const fetchStats = useCallback(async () => {
     const [usersRes, statsRes, chatRes, allRoomsRes] = await Promise.all([
-      axios.get<User[]>(`${BACKEND_URL}/api/admin/users`, { headers: authHeaders() }),
-      axios.get<Stats>(`${BACKEND_URL}/api/admin/stats`, { headers: authHeaders() }),
-      axios.get<ReportedRoom[]>(`${BACKEND_URL}/api/admin/chat-reports`, { headers: authHeaders() }),
-      axios.get<AllRoom[]>(`${BACKEND_URL}/api/chat/rooms`, { headers: authHeaders() }),
+      axios.get<User[]>(`/api/admin/users`, { headers: authHeaders() }),
+      axios.get<Stats>(`/api/admin/stats`, { headers: authHeaders() }),
+      axios.get<ReportedRoom[]>(`/api/admin/chat-reports`, { headers: authHeaders() }),
+      axios.get<AllRoom[]>(`/api/chat/rooms`, { headers: authHeaders() }),
     ])
     setUsers(usersRes.data)
     setStats(statsRes.data)
@@ -115,7 +114,7 @@ export default function AdminPage() {
     setCollectMsg(null)
     try {
       const res = await axios.post(
-        `${BACKEND_URL}/api/admin/collect`,
+        `/api/admin/collect`,
         source ? { source } : {},
         { headers: authHeaders() }
       )
@@ -274,7 +273,7 @@ export default function AdminPage() {
                       onClick={async () => {
                         if (!confirm(`"${room.name}" 채팅방을 삭제하시겠습니까?`)) return
                         try {
-                          await axios.delete(`${BACKEND_URL}/api/chat/rooms/${room.id}`, { headers: authHeaders() })
+                          await axios.delete(`/api/chat/rooms/${room.id}`, { headers: authHeaders() })
                           setReportedRooms((prev) => prev.filter((r) => r.id !== room.id))
                         } catch {
                           alert('삭제에 실패했습니다.')
@@ -347,7 +346,7 @@ export default function AdminPage() {
                   onClick={async () => {
                     if (!confirm(`"${room.name}" 채팅방을 삭제하시겠습니까?`)) return
                     try {
-                      await axios.delete(`${BACKEND_URL}/api/chat/rooms/${room.id}`, { headers: authHeaders() })
+                      await axios.delete(`/api/chat/rooms/${room.id}`, { headers: authHeaders() })
                       setAllRooms((prev) => prev.filter((r) => r.id !== room.id))
                       setReportedRooms((prev) => prev.filter((r) => r.id !== room.id))
                     } catch {

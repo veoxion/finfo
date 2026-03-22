@@ -15,7 +15,7 @@ export default function DownloadButton({ code, name }: DownloadButtonProps) {
     setIsLoading(true)
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/api/indicators/${code}/download?format=csv`
+        `/api/indicators/${code}/download?format=csv`
       )
       if (!response.ok) throw new Error('Download failed')
 
