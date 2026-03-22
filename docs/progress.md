@@ -141,4 +141,19 @@
 
 ## 현재 진행 중
 
-없음 — 다음 작업은 `docs/planning.md` 참조
+### P1-4 배포 — CI/CD 설정 완료, 실제 배포 대기
+
+#### 완료된 배포 준비 작업
+- `.github/workflows/deploy-frontend.yml` — Vercel 배포 워크플로우 (main 브랜치 push 시 자동)
+- `.github/workflows/deploy-backend.yml` — Railway 배포 워크플로우 (main 브랜치 push 시 자동)
+- `backend/railway.json` — Railway 헬스체크 + releaseCommand(`prisma db push`) + 재시작 정책
+- `backend/nixpacks.toml` — Railway 빌드 설정 (`npm run build` → `npm start`)
+- `frontend/vercel.json` — Vercel 빌드 설정
+
+#### 남은 작업 (수동 실행 필요)
+- Vercel 프로젝트 생성 + 환경변수 설정 (Root Directory = `frontend`)
+- Railway 프로젝트 생성 + PostgreSQL/Redis 서비스 + 환경변수 설정 (Root Directory = `backend`)
+- GitHub Secrets 등록 (`VERCEL_TOKEN`, `RAILWAY_TOKEN`, `RAILWAY_SERVICE_NAME`)
+- 배포 후 Railway Shell에서 `npx prisma db seed` 실행
+
+상세 절차: `docs/finfo-infra.md` 배포 가이드 섹션 참조

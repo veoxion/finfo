@@ -19,12 +19,14 @@
 ### ~~3-9. 토론방 채팅 기능 (/discussion)~~ ✅ 완료
 
 ### 4. 배포
-- [ ] **프론트엔드**: Vercel 배포 (`/frontend`)
-- [ ] **백엔드**: Railway 또는 Fly.io 배포 (`/backend`)
-- [ ] 각 플랫폼에 환경변수(`.env`) 설정
-- [ ] GitHub Actions CI/CD 파이프라인
-- [ ] 프로덕션 DB (Railway PostgreSQL 또는 Supabase)
-- [ ] 프로덕션 Redis (Railway Redis 또는 Upstash)
+- [x] GitHub Actions CI/CD 파이프라인 (`.github/workflows/`)
+- [x] Railway 배포 설정 (`backend/railway.json`, `backend/nixpacks.toml`)
+- [x] Vercel 배포 설정 (`frontend/vercel.json`)
+- [x] 배포 가이드 작성 (`docs/finfo-infra.md` 배포 가이드 섹션)
+- [ ] **프론트엔드**: Vercel 프로젝트 생성 + 환경변수 설정 + 배포 실행
+- [ ] **백엔드**: Railway 프로젝트 생성 + PostgreSQL/Redis 서비스 추가 + 환경변수 설정 + 배포 실행
+- [ ] GitHub Secrets 등록 (`VERCEL_TOKEN`, `RAILWAY_TOKEN`, `RAILWAY_SERVICE_NAME`)
+- [ ] 최초 시드 데이터 실행 (`npx prisma db seed` via Railway Shell)
 - [ ] 최초 데이터 수집 실행 (배포 후 수집기 첫 실행)
 
 ---

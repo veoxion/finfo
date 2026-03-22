@@ -320,17 +320,100 @@ finfo/
 
 ---
 
-## 배포 계획 (미완료)
+## 배포 가이드
 
-### 프론트엔드 — Vercel
-- `frontend/` 디렉토리를 Vercel 프로젝트로 연결
-- 환경변수: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_MASTER_EMAIL`
+### 1단계 — GitHub 저장소 준비
 
-### 백엔드 — Railway 또는 Fly.io
-- `backend/` 디렉토리를 Railway 서비스로 배포
-- 환경변수: `.env` 전체 항목 설정
-- PostgreSQL: Railway managed DB 또는 Supabase
-- Redis: Railway Redis 또는 Upstash
+```bash
+# 코드를 GitHub에 push (최초 1회)
+git remote add origin https://github.com/<username>/finfo.git
+git push -u origin main
+```
 
-### CI/CD
-- GitHub Actions — main 브랜치 push 시 자동 배포 (미구성)
+---
+
+### 2단계 — 백엔드 Railway 배포
+
+#### Railway 프로젝트 생성
+1. [railway.app](https://railway.app) → New Project → Deploy from GitHub Repo
+2. 저장소 선택 후 **Root Directory** = `backend` 설정
+3. **Add Service** → PostgreSQL (Railway managed DB)
+4. **Add Service** → Redis (Railway managed Redis)
+
+#### Railway 환경변수 설정
+Railway 대시보드 → 백엔드 서비스 → Variables에 아래 항목 입력:
+
+```
+DATABASE_URL        # Railway PostgreSQL 자동 제공 (Linked Variable)
+REDIS_URL           # Railway Redis 자동 제공 (Linked Variable)
+FRED_API_KEY=...
+BLS_API_KEY=...
+BEA_API_KEY=...
+ECOS_API_KEY=...
+KOSIS_API_KEY=...
+SEC_EDGAR_USER_AGENT=finfo contact@example.com
+JWT_SECRET=...      # 안전한 랜덤 문자열 (openssl rand -base64 32)
+MASTER_EMAIL=master@finfo.com
+MASTER_PASSWORD=... # 강력한 비밀번호 (대/소문자 + 특수문자 8자 이상)
+GROQ_API_KEY=...
+FRONTEND_URL=https://<your-vercel-domain>.vercel.app
+PORT=3001
+```
+
+#### 첫 배포 후 시드 실행
+Railway 대시보드 → 백엔드 서비스 → Shell:
+```bash
+npx prisma db seed
+```
+
+---
+
+### 3단계 — 프론트엔드 Vercel 배포
+
+#### Vercel 프로젝트 생성
+1. [vercel.com](https://vercel.com) → New Project → Import GitHub Repo
+2. **Root Directory** = `frontend` 설정
+3. Framework Preset: Next.js (자동 감지)
+
+#### Vercel 환경변수 설정
+Vercel 대시보드 → Project Settings → Environment Variables:
+
+```
+NEXT_PUBLIC_API_URL=https://<your-railway-domain>.railway.app
+NEXT_PUBLIC_MASTER_EMAIL=master@finfo.com
+```
+
+---
+
+### 4단계 — GitHub Actions CI/CD 설정
+
+#### GitHub Secrets 등록
+GitHub 저장소 → Settings → Secrets and variables → Actions:
+
+| Secret 이름 | 값 |
+|-------------|-----|
+| `VERCEL_TOKEN` | Vercel 계정 Settings → Tokens에서 생성 |
+| `RAILWAY_TOKEN` | Railway 계정 Settings → Tokens에서 생성 |
+| `RAILWAY_SERVICE_NAME` | Railway 서비스 이름 (대시보드에서 확인) |
+
+이후 `main` 브랜치에 push 시:
+- `frontend/**` 변경 → Vercel 자동 배포
+- `backend/**` 변경 → Railway 자동 배포
+
+---
+
+### 5단계 — Vercel에서 Railway 도메인 CORS 허용 확인
+
+Railway 배포 후 발급된 도메인을 백엔드 `FRONTEND_URL` 환경변수에 입력해야 CORS가 동작합니다.
+
+---
+
+### 배포 후 확인 사항
+
+```bash
+# 백엔드 헬스체크
+curl https://<railway-domain>/health
+
+# 프론트엔드 접속
+open https://<vercel-domain>.vercel.app
+```
