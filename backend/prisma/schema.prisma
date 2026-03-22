@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Indicator {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nameKo      String?
+  category    Category
+  unit        String
+  source      String
+  country     String   // ISO 3166-1 alpha-3 (e.g., "KOR", "USA", "WLD")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  values IndicatorValue[]
+
+  @@index([category])
+  @@index([country])
+  @@index([source])
+}
+
+model IndicatorValue {
+  id          String    @id @default(cuid())
+  indicatorId String
+  date        DateTime
+  value       Float
+  createdAt   DateTime  @default(now())
+
+  indicator Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+
+  @@unique([indicatorId, date])
+  @@index([indicatorId, date(sort: Desc)])
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  nickname  String?
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  chatRooms    ChatRoom[]
+  chatMessages ChatMessage[]
+  chatReports  ChatReport[]
+}
+
+model ChatRoom {
+  id        String    @id @default(cuid())
+  name      String
+  createdBy String
+  creator   User      @relation(fields: [createdBy], references: [id])
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  messages ChatMessage[]
+  reports  ChatReport[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  room ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId, createdAt(sort: Asc)])
+}
+
+model ChatReport {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  reason    String
+  createdAt DateTime @default(now())
+
+  room ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id])
+
+  @@unique([roomId, userId])
+}
+
+model CollectorLog {
+  id           String        @id @default(cuid())
+  source       String
+  status       CollectStatus
+  message      String?
+  recordsCount Int           @default(0)
+  createdAt    DateTime      @default(now())
+
+  @@index([source, createdAt(sort: Desc)])
+}
+
+enum Category {
+  gdp
+  interest_rate
+  cpi
+  exchange_rate
+  employment
+  trade
+  other
+}
+
+enum CollectStatus {
+  success
+  failure
+  partial
+}

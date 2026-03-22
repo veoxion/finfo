@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Write",
+      "Bash",
+      "WebFetch(domain:datahelpdesk.worldbank.org)",
+      "WebFetch(domain:data.imf.org)",
+      "WebFetch(domain:www.oecd.org)",
+      "WebFetch(domain:fred.stlouisfed.org)",
+      "WebFetch(domain:www.bls.gov)",
+      "WebFetch(domain:apps.bea.gov)",
+      "WebFetch(domain:www.sec.gov)",
+      "WebFetch(domain:ecos.bok.or.kr)",
+      "WebFetch(domain:kosis.kr)",
+      "WebFetch(domain:www.data.go.kr)",
+      "WebFetch(domain:efts.sec.gov)",
+      "WebFetch(domain:dataservices.imf.org)",
+      "WebFetch(domain:data.oecd.org)",
+      "Skill(update-config)"
+    ]
+  }
+}
