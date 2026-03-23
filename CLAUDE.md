@@ -7,6 +7,18 @@
 
 **핵심 가치**: 한국(ECOS, KOSIS)과 글로벌(World Bank, FRED, BLS) 경제 지표를 통합 비교
 
+## 기술 스택
+
+| 영역 | 기술 |
+|------|------|
+| 프론트엔드 | Next.js 14 (App Router) + TypeScript + Tailwind CSS + Recharts + TanStack Query |
+| 백엔드 | Node.js + Fastify 4.x + TypeScript |
+| 인증 | @fastify/jwt@8 (JWT Bearer Token) |
+| DB | PostgreSQL 16 + Redis 7 (캐시) |
+| ORM | Prisma |
+| AI | Groq API (llama-3.3-70b-versatile) |
+| 배포 | Railway (프론트엔드 + 백엔드 + PostgreSQL + Redis) |
+
 ## 핵심 설계 원칙
 
 - **외부 API 호출 최소화**: 모든 데이터는 DB에 캐시 후 서빙. 호출 제한 초과 방지.
@@ -23,10 +35,11 @@
 
 ## 문서 가이드
 
+> `docs/` 폴더는 git에 포함되지 않으며 로컬에서만 관리합니다.
+
 | 파일 | 내용 |
 |------|------|
-| `docs/planning.md` | 앞으로 작업할 기능 목록 (P1/P2 미착수 항목) |
-| `docs/progress.md` | 현재 진행 중인 작업 및 완료된 구현 현황 |
-| `docs/issue.md` | 개발 중 발생한 버그·이슈와 해결 내역 |
-| `docs/finfo-infra.md` | 기술 스택, API 엔드포인트, DB 스키마, 수집 스케줄, 환경변수, 로컬 실행 방법 |
-| `docs/planning.md` (기획) | API 조사, 서비스 컨셉, 데이터 흐름도, 기술 스택 상세 선정 이유 |
+| `docs/planning.md` | 앞으로의 작업 계획 (P2/P3 미착수 항목) |
+| `docs/progress.md` | 완료된 구현 현황 (P0 MVP → P1 회원/커뮤니티 → 배포) |
+| `docs/issue.md` | 버그·이슈 발생 및 해결 내역 |
+| `docs/finfo-infra.md` | 기술 스택, API 엔드포인트, DB 스키마, 수집 스케줄, 환경변수, 배포 가이드 |
