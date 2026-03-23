@@ -4,10 +4,11 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { getToken, getEmail } from '@/lib/auth'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 const MASTER_EMAIL = process.env.NEXT_PUBLIC_MASTER_EMAIL ?? ''
 
-const SOURCES = ['WorldBank', 'FRED', 'ECOS', 'BLS', 'KOSIS']
+const SOURCES = ['WorldBank', 'FRED', 'ECOS', 'BLS', 'KOSIS', 'BEA']
 
 interface User {
   id: string
@@ -82,18 +83,22 @@ export default function AdminPage() {
   const [error, setError] = useState('')
   const [collecting, setCollecting] = useState<string | null>(null)
   const [collectMsg, setCollectMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [collectorHistory, setCollectorHistory] = useState<{ source: string; status: string; recordsCount: number; createdAt: string }[]>([])
+
 
   const fetchStats = useCallback(async () => {
-    const [usersRes, statsRes, chatRes, allRoomsRes] = await Promise.all([
+    const [usersRes, statsRes, chatRes, allRoomsRes, historyRes] = await Promise.all([
       axios.get<User[]>(`/api/admin/users`, { headers: authHeaders() }),
       axios.get<Stats>(`/api/admin/stats`, { headers: authHeaders() }),
       axios.get<ReportedRoom[]>(`/api/admin/chat-reports`, { headers: authHeaders() }),
       axios.get<AllRoom[]>(`/api/chat/rooms`, { headers: authHeaders() }),
+      axios.get<{ source: string; status: string; recordsCount: number; createdAt: string }[]>(`/api/admin/collector-history`, { headers: authHeaders() }),
     ])
     setUsers(usersRes.data)
     setStats(statsRes.data)
     setReportedRooms(chatRes.data)
     setAllRooms(allRoomsRes.data)
+    setCollectorHistory(historyRes.data)
   }, [])
 
   useEffect(() => {
@@ -235,6 +240,55 @@ export default function AdminPage() {
               )
             })}
           </ul>
+        </div>
+      )}
+
+      {/* 수집기 모니터링 차트 */}
+      {collectorHistory.length > 0 && (
+        <div className="rounded-xl border border-slate-700 bg-[#1e293b] p-6">
+          <h2 className="mb-4 text-base font-semibold text-slate-200">수집기 모니터링 (최근 30일)</h2>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={(() => {
+                // 날짜별로 그룹핑하여 소스별 수집 건수 집계
+                const grouped: Record<string, Record<string, number>> = {}
+                for (const log of collectorHistory) {
+                  const dateKey = new Date(log.createdAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+                  if (!grouped[dateKey]) grouped[dateKey] = {}
+                  grouped[dateKey][log.source] = (grouped[dateKey][log.source] ?? 0) + (log.status === 'success' ? 1 : 0)
+                }
+                return Object.entries(grouped).map(([date, sources]) => ({ date, ...sources }))
+              })()}>
+                <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: 8 }} labelStyle={{ color: '#e2e8f0' }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                {SOURCES.map((source, i) => (
+                  <Line key={source} type="monotone" dataKey={source} stroke={['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'][i]} strokeWidth={2} dot={false} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          {/* 실패 이력 */}
+          {(() => {
+            const failures = collectorHistory.filter((l) => l.status === 'failure')
+            if (failures.length === 0) return null
+            return (
+              <div className="mt-4">
+                <h3 className="mb-2 text-sm font-medium text-red-400">최근 실패 이력</h3>
+                <ul className="space-y-1">
+                  {failures.slice(-10).reverse().map((log, i) => (
+                    <li key={i} className="flex items-center gap-3 text-xs">
+                      <span className="text-red-400 font-medium w-20">{log.source}</span>
+                      <span className="text-slate-500">
+                        {new Date(log.createdAt).toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })()}
         </div>
       )}
 
@@ -393,13 +447,31 @@ export default function AdminPage() {
                   </span>
                 )}
               </div>
-              <span className="text-xs text-slate-500 shrink-0">
-                {new Date(user.createdAt).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </span>
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="text-xs text-slate-500">
+                  {new Date(user.createdAt).toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </span>
+                {!user.deletedAt && user.email !== MASTER_EMAIL && (
+                  <button
+                    onClick={async () => {
+                      if (!confirm(`"${user.email}" 사용자를 강제 탈퇴하시겠습니까?`)) return
+                      try {
+                        await axios.delete(`/api/admin/users/${user.id}`, { headers: authHeaders() })
+                        setUsers((prev) => prev.map((u) => u.id === user.id ? { ...u, deletedAt: new Date().toISOString() } : u))
+                      } catch {
+                        alert('강제 탈퇴에 실패했습니다.')
+                      }
+                    }}
+                    className="rounded border border-red-800 px-2 py-0.5 text-xs text-red-400 transition hover:bg-red-900/30"
+                  >
+                    강제 탈퇴
+                  </button>
+                )}
+              </div>
             </li>
           ))}
         </ul>

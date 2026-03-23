@@ -171,6 +171,38 @@ const indicators = [
     description: '통계청이 집계하는 한국 소비자물가지수입니다. 460개 품목의 가격 변동을 측정하며 2020년을 기준(=100)으로 합니다.',
   },
 
+  // === BEA - 미국 경제 상세 ===
+  {
+    code: 'BEA_REAL_GDP_GROWTH',
+    name: 'Real GDP Growth Rate',
+    nameKo: '미국 실질 GDP 성장률',
+    category: 'gdp' as const,
+    unit: '%',
+    source: 'bea',
+    country: 'USA',
+    description: '미국의 분기별 실질 GDP 성장률(전기 대비 연율)입니다. 인플레이션을 제거한 실제 경제 성장을 보여주며 NBER 경기침체 판단의 핵심 지표입니다.',
+  },
+  {
+    code: 'BEA_PERSONAL_INCOME',
+    name: 'Personal Income',
+    nameKo: '미국 개인소득',
+    category: 'other' as const,
+    unit: 'Billions of Dollars',
+    source: 'bea',
+    country: 'USA',
+    description: '미국 개인소득 총액으로 임금, 사업소득, 투자소득, 이전소득 등을 포함합니다. 소비 여력을 가늠하는 선행 지표입니다.',
+  },
+  {
+    code: 'BEA_PCE',
+    name: 'Personal Consumption Expenditures',
+    nameKo: '미국 개인소비지출 (PCE)',
+    category: 'other' as const,
+    unit: 'Billions of Dollars',
+    source: 'bea',
+    country: 'USA',
+    description: '미국 개인소비지출(PCE)로 미국 GDP의 약 70%를 차지합니다. 연준이 인플레이션 측정에 CPI보다 PCE 물가지수를 선호합니다.',
+  },
+
   // === 한국은행 ECOS ===
   {
     code: 'ECOS_BASE_RATE',

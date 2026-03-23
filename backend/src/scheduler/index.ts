@@ -1,6 +1,6 @@
 import cron from 'node-cron'
 import { PrismaClient } from '@prisma/client'
-import { WorldBankCollector, FredCollector, EcosCollector, BlsCollector, KosisCollector } from '../collectors/index.js'
+import { WorldBankCollector, FredCollector, EcosCollector, BlsCollector, KosisCollector, BeaCollector } from '../collectors/index.js'
 import type { CollectedData } from '../collectors/base.js'
 
 const prisma = new PrismaClient()
@@ -58,6 +58,7 @@ const COLLECTORS: Record<string, () => Promise<CollectedData[]>> = {
   ECOS: () => new EcosCollector().collect(),
   BLS: () => new BlsCollector().collect(),
   KOSIS: () => new KosisCollector().collect(),
+  BEA: () => new BeaCollector().collect(),
 }
 
 export async function collectSource(source: string): Promise<{ ok: boolean; message: string }> {
@@ -102,6 +103,12 @@ export function startScheduler() {
   cron.schedule('0 5 * * *', () => {
     const collector = new KosisCollector()
     runCollector('kosis', () => collector.collect())
+  })
+
+  // BEA: 매일 06:00
+  cron.schedule('0 6 * * *', () => {
+    const collector = new BeaCollector()
+    runCollector('bea', () => collector.collect())
   })
 
   console.log('[Scheduler] All jobs registered')
