@@ -33,10 +33,10 @@ export default function Header() {
   return (
     <header className="border-b border-slate-800 bg-[#0f172a]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-4">
-        <Link href="/" className="text-lg sm:text-xl font-bold text-blue-400 hover:text-blue-300">
+        <Link href="/" className="flex-shrink-0 text-lg sm:text-xl font-bold text-blue-400 hover:text-blue-300">
           finfo
         </Link>
-        <nav className="flex min-w-0 items-center gap-3 sm:gap-6 text-sm overflow-x-auto scrollbar-hide">
+        <nav className="flex flex-1 min-w-0 items-center gap-3 sm:gap-6 text-sm overflow-x-auto scrollbar-hide">
           <Link href="/" className={`${navLinkClass('/')} whitespace-nowrap`}>대시보드</Link>
           <Link href="/indicators" className={`${navLinkClass('/indicators')} whitespace-nowrap`}>지표 탐색</Link>
           <Link href="/favorites" className={`${navLinkClass('/favorites')} whitespace-nowrap`}>즐겨찾기</Link>
