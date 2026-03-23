@@ -36,42 +36,44 @@ export default function Header() {
         <Link href="/" className="flex-shrink-0 text-lg sm:text-xl font-bold text-blue-400 hover:text-blue-300">
           finfo
         </Link>
-        <nav className="flex flex-1 min-w-0 items-center gap-3 sm:gap-6 text-sm overflow-x-auto scrollbar-hide">
-          <Link href="/" className={`${navLinkClass('/')} whitespace-nowrap`}>대시보드</Link>
-          <Link href="/indicators" className={`${navLinkClass('/indicators')} whitespace-nowrap`}>지표 탐색</Link>
-          <Link href="/favorites" className={`${navLinkClass('/favorites')} whitespace-nowrap`}>즐겨찾기</Link>
-          <Link href="/compare" className={`${navLinkClass('/compare')} whitespace-nowrap`}>비교</Link>
-          <Link href="/calendar" className={`${navLinkClass('/calendar')} whitespace-nowrap`}>캘린더</Link>
-          <Link href="/briefing" className={`${navLinkClass('/briefing')} whitespace-nowrap`}>AI 브리핑</Link>
-          <Link href="/discussion" className={`${navLinkClass('/discussion')} whitespace-nowrap`}>토론방</Link>
+        <nav className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
+          <div className="flex w-max items-center gap-3 sm:gap-6 text-sm">
+            <Link href="/" className={navLinkClass('/')}>대시보드</Link>
+            <Link href="/indicators" className={navLinkClass('/indicators')}>지표 탐색</Link>
+            <Link href="/favorites" className={navLinkClass('/favorites')}>즐겨찾기</Link>
+            <Link href="/compare" className={navLinkClass('/compare')}>비교</Link>
+            <Link href="/calendar" className={navLinkClass('/calendar')}>캘린더</Link>
+            <Link href="/briefing" className={navLinkClass('/briefing')}>AI 브리핑</Link>
+            <Link href="/discussion" className={navLinkClass('/discussion')}>토론방</Link>
 
-          {/* 로그인 상태에서만 보이는 탭 */}
-          {email && (
-            <>
-              {isMaster && (
-                <Link
-                  href="/admin"
-                  className={`hidden sm:block rounded px-2 py-0.5 text-xs font-medium transition ${
-                    pathname.startsWith('/admin')
-                      ? 'bg-blue-700 text-white'
-                      : 'border border-blue-700 text-blue-400 hover:bg-blue-900/40'
-                  }`}
-                >
-                  관리자
+            {/* 로그인 상태에서만 보이는 탭 */}
+            {email && (
+              <>
+                {isMaster && (
+                  <Link
+                    href="/admin"
+                    className={`rounded px-2 py-0.5 text-xs font-medium transition ${
+                      pathname.startsWith('/admin')
+                        ? 'bg-blue-700 text-white'
+                        : 'border border-blue-700 text-blue-400 hover:bg-blue-900/40'
+                    }`}
+                  >
+                    관리자
+                  </Link>
+                )}
+                <Link href="/mypage" className={navLinkClass('/mypage')}>
+                  {nickname ?? '마이페이지'}
                 </Link>
-              )}
-              <Link href="/mypage" className={navLinkClass('/mypage')}>
-                {nickname ?? '마이페이지'}
-              </Link>
-            </>
-          )}
+              </>
+            )}
 
-          <button
-            onClick={handleLogout}
-            className="border-l border-slate-700 pl-3 text-xs text-slate-400 hover:text-slate-100 transition"
-          >
-            로그아웃
-          </button>
+            <button
+              onClick={handleLogout}
+              className="border-l border-slate-700 pl-3 text-xs text-slate-400 hover:text-slate-100 transition whitespace-nowrap"
+            >
+              로그아웃
+            </button>
+          </div>
         </nav>
       </div>
     </header>
