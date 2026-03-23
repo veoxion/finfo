@@ -37,3 +37,6 @@ backend/prisma/migrations/
 
 # Redis dump
 dump.rdb
+
+# Docs (로컬 전용)
+docs/
