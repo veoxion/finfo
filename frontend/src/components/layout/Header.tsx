@@ -36,7 +36,7 @@ export default function Header() {
         <Link href="/" className="text-lg sm:text-xl font-bold text-blue-400 hover:text-blue-300">
           finfo
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-6 text-sm overflow-x-auto scrollbar-hide">
+        <nav className="flex min-w-0 items-center gap-3 sm:gap-6 text-sm overflow-x-auto scrollbar-hide">
           <Link href="/" className={`${navLinkClass('/')} whitespace-nowrap`}>대시보드</Link>
           <Link href="/indicators" className={`${navLinkClass('/indicators')} whitespace-nowrap`}>지표 탐색</Link>
           <Link href="/favorites" className={`${navLinkClass('/favorites')} whitespace-nowrap`}>즐겨찾기</Link>
