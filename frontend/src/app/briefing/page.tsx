@@ -24,6 +24,8 @@ export default function BriefingPage() {
     queryKey: ['briefing'],
     queryFn: getBriefing,
     staleTime: 1000 * 60 * 60 * 6, // 6시간
+    gcTime: 1000 * 60 * 60 * 6, // 6시간 동안 캐시 유지 (기본 5분이면 페이지 이탈 후 캐시 소멸)
+    refetchOnWindowFocus: false,
   })
 
   const handleRefresh = async () => {

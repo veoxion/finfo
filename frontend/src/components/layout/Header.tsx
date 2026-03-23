@@ -36,16 +36,14 @@ export default function Header() {
         <Link href="/" className="text-lg sm:text-xl font-bold text-blue-400 hover:text-blue-300">
           finfo
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-6 text-sm">
-          <Link href="/" className={navLinkClass('/')}>대시보드</Link>
-          <Link href="/indicators" className={navLinkClass('/indicators')}>지표 탐색</Link>
-          <Link href="/favorites" className={navLinkClass('/favorites')}>즐겨찾기</Link>
-          <span className="hidden md:contents">
-            <Link href="/compare" className={navLinkClass('/compare')}>비교</Link>
-            <Link href="/calendar" className={navLinkClass('/calendar')}>캘린더</Link>
-            <Link href="/briefing" className={navLinkClass('/briefing')}>AI 브리핑</Link>
-            <Link href="/discussion" className={navLinkClass('/discussion')}>토론방</Link>
-          </span>
+        <nav className="flex items-center gap-3 sm:gap-6 text-sm overflow-x-auto scrollbar-hide">
+          <Link href="/" className={`${navLinkClass('/')} whitespace-nowrap`}>대시보드</Link>
+          <Link href="/indicators" className={`${navLinkClass('/indicators')} whitespace-nowrap`}>지표 탐색</Link>
+          <Link href="/favorites" className={`${navLinkClass('/favorites')} whitespace-nowrap`}>즐겨찾기</Link>
+          <Link href="/compare" className={`${navLinkClass('/compare')} whitespace-nowrap`}>비교</Link>
+          <Link href="/calendar" className={`${navLinkClass('/calendar')} whitespace-nowrap`}>캘린더</Link>
+          <Link href="/briefing" className={`${navLinkClass('/briefing')} whitespace-nowrap`}>AI 브리핑</Link>
+          <Link href="/discussion" className={`${navLinkClass('/discussion')} whitespace-nowrap`}>토론방</Link>
 
           {/* 로그인 상태에서만 보이는 탭 */}
           {email && (
