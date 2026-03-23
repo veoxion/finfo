@@ -40,3 +40,9 @@ dump.rdb
 
 # Docs (로컬 전용)
 docs/
+
+# Claude Code 로컬 설정
+.claude/settings.local.json
+
+# Vercel (미사용)
+frontend/vercel.json
